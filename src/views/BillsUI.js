@@ -19,8 +19,43 @@ const row = (bill) => {
     `;
 };
 
+const parseCustomDate = (dateString) => {
+  const parts = dateString.split(" ");
+
+  const day = parts[0];
+  const monthAbbr = parts[1];
+  const year = parts[2];
+
+  const monthAbbreviations = {
+    "Jan.": 0,
+    "Fév.": 1,
+    "Mar.": 2,
+    "Avr.": 3,
+    Mai: 4,
+    Juin: 5,
+    "Juil.": 6,
+    Août: 7,
+    "Sept.": 8,
+    "Oct.": 9,
+    "Nov.": 10,
+    "Déc.": 11,
+  };
+
+  const month = monthAbbreviations[monthAbbr];
+
+  // Ajouter un ajustement au jour pour les jours à un chiffre
+  const adjustedDay = day.length === 1 ? `0${day}` : day;
+
+  // Retourne un objet Date
+  return new Date(year, month, adjustedDay);
+};
+
 const rows = (data) => {
-  const sortedBills = data?.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedBills = data?.sort((a, b) => {
+    const dateA = parseCustomDate(a.date).getTime();
+    const dateB = parseCustomDate(b.date).getTime();
+    return dateB - dateA;
+  });
   return sortedBills?.map((bill) => row(bill)).join("") ?? "";
 };
 
